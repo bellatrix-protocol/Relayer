@@ -1,5 +1,5 @@
 
-var proofs = [
+export var proofs = [
     {
         prevProofHash : "0x0000000000000000000000000000000000000001",
         currentProofHash : "0x1362b187c445f8f2206de65aca979dda3d406f28b6fb2b8d104b9745244103e4",
