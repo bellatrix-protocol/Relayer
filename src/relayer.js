@@ -13,18 +13,17 @@ export async function cli(){
     console.log("RPC_URL" , process.env.RPC_URL)
     var VerifierContract = await new web3.eth.Contract(verifierABI, process.env.CONTRACT_ADDR );
     var networkId =  await web3.eth.net.getId();
-    var account = web3.eth.accounts.privateKeyToAccount(process.env.PRIV_KEY);
+    var account = process.env.USER_ADDR;
 
     var i = 0;
 
     while (true){
 
-        await timer(10000)
         console.log("Checking for new proofs...")
         console.log("Sending New proofs...")
 
         var proof = proofs[i%2];
-        var tx = VerifierContract.methods.addEpoch(proof.callData[0],proof.callData[1],proof.callData[2],proof.callData[3]);
+        var tx = VerifierContract.methods.addEpoch(proof.callData0,proof.callData1,proof.callData2,proof.callData3);
         var gas = await tx.estimateGas({from: account})
         var gasPrice = await web3.eth.getGasPrice();
         var data = tx.encodeABI();
@@ -43,8 +42,11 @@ export async function cli(){
         );
 
         var receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+        var epochID = await VerifierContract.methods.epochCounter().call();
+        console.log("Epoch ID : ", epochID , " Sent", receipt.transactionHash)
 
-        console.log("Epoch Sent", receipt.transactionHash)
+        await timer(20000)
+
     }
 
     
